@@ -3,43 +3,50 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Frigates Resume/CV Creator — Build a professional resume in minutes." />
-  <title>Frigates Resume/CV Creator</title>
-
-  <!-- Google Fonts with display=swap for performance -->
+  <meta name="description" content="Frigates Resume/CV Creator — Build a professional resume in minutes. Free, instant PDF download." />
+  <meta property="og:title" content="Frigates Resume/CV Creator" />
+  <meta property="og:description" content="Build a polished, professional CV in minutes and download as PDF instantly." />
+  <title>Frigates Resume/CV Creator | Free Professional CV Builder</title>
+ 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-
+ 
+  <!-- html2pdf — real PDF generation, no print dialog needed -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+ 
   <style>
     /* ── Variables ── */
     :root {
-      --bg:       #09090f;
-      --surface:  #111118;
-      --surface2: #16161f;
-      --border:   #22222e;
-      --border2:  #2e2e3e;
-      --gold:     #c9a84c;
-      --gold2:    #e8c97a;
-      --text:     #eeedf5;
-      --muted:    #7070a0;
-      --muted2:   #4a4a6a;
-      --danger:   #e05c7a;
-      --r:        12px;
-      --rl:       18px;
+      --bg:      #09090f;
+      --surface: #111118;
+      --sur2:    #16161f;
+      --border:  #22222e;
+      --bor2:    #2e2e3e;
+      --gold:    #c9a84c;
+      --gold2:   #e8c97a;
+      --text:    #eeedf5;
+      --muted:   #7070a0;
+      --muted2:  #4a4a6a;
+      --danger:  #e05c7a;
+      --r:       12px;
+      --rl:      18px;
+      --font:    'Outfit', Georgia, sans-serif;
+      --serif:   'Playfair Display', Georgia, serif;
     }
-
+ 
     /* ── Reset ── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
     body {
       background: var(--bg);
       color: var(--text);
-      font-family: 'Outfit', Georgia, sans-serif;
+      font-family: var(--font);
       min-height: 100vh;
       overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
     }
-
+ 
     /* Ambient glow */
     body::before {
       content: '';
@@ -51,7 +58,7 @@
       pointer-events: none;
       z-index: 0;
     }
-
+ 
     /* ── HEADER ── */
     header {
       position: relative;
@@ -60,49 +67,41 @@
       padding: 52px 20px 36px;
       animation: fadeDown 0.7s ease both;
     }
-
     .brand-logo {
       display: inline-flex;
       align-items: center;
       gap: 8px;
       margin-bottom: 20px;
     }
-
     .brand-icon {
-      width: 38px; height: 38px;
+      width: 40px; height: 40px;
       background: linear-gradient(135deg, var(--gold), #a8722a);
-      border-radius: 10px;
+      border-radius: 11px;
       display: flex; align-items: center; justify-content: center;
-      font-size: 18px;
+      font-size: 20px;
       box-shadow: 0 4px 18px rgba(201,168,76,0.3);
     }
-
     .brand-name {
-      font-family: 'Playfair Display', Georgia, serif;
-      font-size: 22px;
-      font-weight: 700;
+      font-family: var(--serif);
+      font-size: 22px; font-weight: 700;
       color: var(--gold2);
       letter-spacing: -0.01em;
     }
-
     .badge {
       display: inline-flex;
-      align-items: center;
-      gap: 6px;
+      align-items: center; gap: 6px;
       background: rgba(201,168,76,0.1);
       border: 1px solid rgba(201,168,76,0.28);
       border-radius: 100px;
       padding: 5px 14px;
-      font-size: 11px;
-      font-weight: 600;
+      font-size: 11px; font-weight: 600;
       letter-spacing: 0.12em;
       color: var(--gold2);
       text-transform: uppercase;
       margin-bottom: 16px;
     }
-
     h1 {
-      font-family: 'Playfair Display', Georgia, serif;
+      font-family: var(--serif);
       font-size: clamp(30px, 5.5vw, 52px);
       font-weight: 900;
       letter-spacing: -0.02em;
@@ -113,7 +112,6 @@
       background-clip: text;
       margin-bottom: 12px;
     }
-
     header > p {
       color: var(--muted);
       font-size: 15px;
@@ -121,24 +119,35 @@
       margin: 0 auto;
       line-height: 1.65;
     }
-
+ 
+    /* ── PROGRESS BAR ── */
+    .prog-wrap {
+      height: 3px;
+      background: var(--border);
+      overflow: hidden;
+    }
+    .prog-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--gold), var(--gold2));
+      transition: width 0.4s ease;
+      width: 25%;
+    }
+ 
     /* ── LAYOUT ── */
     .app {
-      position: relative;
-      z-index: 5;
-      max-width: 1120px;
-      margin: 0 auto;
+      position: relative; z-index: 5;
+      max-width: 1120px; margin: 0 auto;
       padding: 0 20px 60px;
       display: grid;
       grid-template-columns: 365px 1fr;
       gap: 24px;
       align-items: start;
     }
-
     @media (max-width: 860px) {
       .app { grid-template-columns: 1fr; }
+      .form-panel { position: static !important; }
     }
-
+ 
     /* ── FORM PANEL ── */
     .form-panel {
       background: var(--surface);
@@ -149,7 +158,7 @@
       position: sticky;
       top: 20px;
     }
-
+ 
     /* Steps nav */
     .steps-nav {
       display: flex;
@@ -158,22 +167,19 @@
       scrollbar-width: none;
     }
     .steps-nav::-webkit-scrollbar { display: none; }
-
+ 
     .step-btn {
-      flex: 1;
-      min-width: 58px;
+      flex: 1; min-width: 58px;
       padding: 13px 6px;
-      background: none;
-      border: none;
+      background: none; border: none;
       border-bottom: 2px solid transparent;
       cursor: pointer;
-      font-family: 'Outfit', sans-serif;
-      font-size: 10.5px;
-      font-weight: 600;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
+      font-family: var(--font);
+      font-size: 10.5px; font-weight: 600;
+      letter-spacing: 0.08em; text-transform: uppercase;
       color: var(--muted);
       transition: color 0.2s, background 0.2s, border-color 0.2s;
+      /* FIX 1: type="button" added in HTML to prevent accidental form submit */
     }
     .step-btn:hover { color: var(--text); background: rgba(255,255,255,0.03); }
     .step-btn.active {
@@ -183,49 +189,42 @@
     }
     .step-btn .num {
       display: block;
-      font-size: 15px;
-      font-weight: 700;
+      font-size: 15px; font-weight: 700;
       margin-bottom: 2px;
-      font-family: 'Playfair Display', Georgia, serif;
+      font-family: var(--serif);
     }
-
+ 
     /* Form body */
     .form-body { padding: 22px; }
-
+ 
     .step-panel { display: none; animation: fadeIn 0.3s ease; }
     .step-panel.active { display: block; }
-
+ 
     .sec-title {
-      font-family: 'Playfair Display', Georgia, serif;
-      font-size: 19px;
-      font-weight: 700;
+      font-family: var(--serif);
+      font-size: 19px; font-weight: 700;
       color: var(--text);
       margin-bottom: 18px;
       padding-bottom: 10px;
       border-bottom: 1px solid var(--border);
     }
-
+ 
     /* Fields */
     .field { margin-bottom: 14px; }
-
     label {
       display: block;
-      font-size: 10.5px;
-      font-weight: 600;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 6px;
+      font-size: 10.5px; font-weight: 600;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 6px;
     }
-
     input, textarea {
       width: 100%;
-      background: var(--surface2);
-      border: 1px solid var(--border2);
+      background: var(--sur2);
+      border: 1.5px solid var(--bor2);
       border-radius: 8px;
       padding: 10px 12px;
       color: var(--text);
-      font-family: 'Outfit', Georgia, sans-serif;
+      font-family: var(--font);
       font-size: 13.5px;
       outline: none;
       transition: border-color 0.2s, box-shadow 0.2s;
@@ -236,137 +235,160 @@
       box-shadow: 0 0 0 3px rgba(201,168,76,0.1);
     }
     input::placeholder, textarea::placeholder { color: var(--muted2); }
-
+    /* FIX 5: validation highlight */
+    input.invalid, textarea.invalid { border-color: var(--danger) !important; }
+ 
     .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-
+    @media (max-width: 420px) { .row2 { grid-template-columns: 1fr; } }
+ 
     /* Entry cards */
     .entry-card {
-      background: var(--surface2);
+      background: var(--sur2);
       border: 1px solid var(--border);
       border-radius: var(--r);
-      padding: 15px;
-      margin-bottom: 12px;
+      padding: 15px; margin-bottom: 12px;
+      animation: fadeIn 0.25s ease;
     }
     .entry-hdr {
       display: flex;
-      justify-content: space-between;
-      align-items: center;
+      justify-content: space-between; align-items: center;
       margin-bottom: 12px;
     }
     .entry-lbl { font-size: 11.5px; font-weight: 700; color: var(--gold2); letter-spacing: 0.05em; }
     .btn-rm {
-      background: none;
-      border: none;
-      color: var(--danger);
-      cursor: pointer;
-      font-size: 12px;
-      font-family: 'Outfit', sans-serif;
-      font-weight: 500;
-      padding: 2px 8px;
-      border-radius: 4px;
+      background: none; border: none;
+      color: var(--danger); cursor: pointer;
+      font-size: 12px; font-family: var(--font); font-weight: 500;
+      padding: 2px 8px; border-radius: 4px;
       transition: background 0.2s;
+      /* FIX 1: type="button" in HTML */
     }
     .btn-rm:hover { background: rgba(224,92,122,0.12); }
-
+ 
     .btn-add {
-      width: 100%;
-      padding: 10px;
+      width: 100%; padding: 10px;
       background: none;
-      border: 1px dashed var(--border2);
+      border: 1px dashed var(--bor2);
       border-radius: 8px;
-      color: var(--muted);
-      cursor: pointer;
-      font-family: 'Outfit', sans-serif;
-      font-size: 13px;
-      font-weight: 500;
-      transition: all 0.2s;
-      margin-top: 2px;
+      color: var(--muted); cursor: pointer;
+      font-family: var(--font); font-size: 13px; font-weight: 500;
+      transition: all 0.2s; margin-top: 2px;
+      /* FIX 1: type="button" in HTML */
     }
     .btn-add:hover { border-color: var(--gold); color: var(--gold2); background: rgba(201,168,76,0.05); }
-
-    /* Buttons */
+ 
+    /* Nav buttons */
     .form-nav {
-      display: flex;
-      gap: 10px;
+      display: flex; gap: 10px;
       padding: 16px 22px;
       border-top: 1px solid var(--border);
     }
-
     .btn {
-      padding: 11px 20px;
-      border-radius: 9px;
-      font-family: 'Outfit', sans-serif;
-      font-size: 13.5px;
-      font-weight: 600;
+      padding: 11px 20px; border-radius: 9px;
+      font-family: var(--font);
+      font-size: 13.5px; font-weight: 600;
       cursor: pointer;
-      transition: transform 0.2s, box-shadow 0.2s, background 0.2s, color 0.2s;
-      border: none;
+      transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+      border: none; line-height: 1;
     }
-
     .btn-ghost {
       background: none;
-      border: 1px solid var(--border2);
+      border: 1px solid var(--bor2);
       color: var(--muted);
     }
     .btn-ghost:hover:not(:disabled) { color: var(--text); background: rgba(255,255,255,0.04); }
     .btn-ghost:disabled { opacity: 0.3; cursor: not-allowed; }
-
+ 
     .btn-primary {
       background: linear-gradient(135deg, var(--gold), #a8722a);
-      color: #0a0a0a;
-      font-weight: 700;
+      color: #0a0a0a; font-weight: 700;
       box-shadow: 0 4px 18px rgba(201,168,76,0.22);
     }
     .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 26px rgba(201,168,76,0.32); }
-
+ 
+    /* FIX 3: shimmer needs background-size on the element, not just the keyframe */
     .btn-gen {
       flex: 1;
       background: linear-gradient(135deg, #c9a84c, #e8c97a, #a8722a);
-      background-size: 200% auto;
-      color: #0a0a0a;
-      font-weight: 700;
+      background-size: 200% auto; /* FIX 3 */
+      color: #0a0a0a; font-weight: 700;
       box-shadow: 0 4px 22px rgba(201,168,76,0.28);
       animation: shimmer 3s linear infinite;
     }
     .btn-gen:hover { transform: translateY(-1px); box-shadow: 0 6px 28px rgba(201,168,76,0.38); }
-
-    @keyframes shimmer { 0% { background-position: 0% center; } 100% { background-position: 200% center; } }
-
+    @keyframes shimmer {
+      0%   { background-position: 0% center; }
+      100% { background-position: 200% center; }
+    }
+ 
+    /* Validation error bar */
+    .val-err {
+      margin: 0 22px 14px;
+      padding: 10px 13px;
+      background: rgba(224,92,122,0.1);
+      border: 1px solid rgba(224,92,122,0.3);
+      border-radius: 8px;
+      color: #f87171;
+      font-size: 12.5px; font-weight: 600;
+      display: none;
+      animation: fadeIn 0.2s ease;
+    }
+ 
     /* ── PREVIEW PANEL ── */
     .preview-panel { animation: fadeUp 0.6s 0.2s ease both; }
-
     .preview-hdr {
-      display: flex;
-      align-items: center;
+      display: flex; align-items: center;
       justify-content: space-between;
       margin-bottom: 14px;
+      flex-wrap: wrap; gap: 10px;
     }
-
     .preview-title {
-      font-family: 'Playfair Display', Georgia, serif;
-      font-size: 17px;
-      font-weight: 700;
+      font-family: var(--serif);
+      font-size: 17px; font-weight: 700;
       color: var(--muted);
     }
     .preview-title span { color: var(--gold2); }
-
-    .btn-print {
-      padding: 8px 16px;
+ 
+    .preview-btns { display: flex; gap: 8px; }
+ 
+    /* Rebuild button */
+    .btn-rebuild {
+      padding: 8px 14px;
       background: none;
-      border: 1px solid var(--border2);
+      border: 1px solid var(--bor2);
       border-radius: 8px;
-      color: var(--muted);
-      cursor: pointer;
-      font-family: 'Outfit', sans-serif;
-      font-size: 12px;
-      font-weight: 600;
+      color: var(--muted); cursor: pointer;
+      font-family: var(--font); font-size: 12px; font-weight: 600;
       transition: all 0.2s;
-      display: flex;
-      align-items: center;
-      gap: 6px;
+      display: none; /* shown after first build */
     }
-    .btn-print:hover { border-color: var(--gold); color: var(--gold2); }
-
+    .btn-rebuild:hover { border-color: var(--gold); color: var(--gold2); }
+ 
+    /* FIX 2: Real PDF button — uses html2pdf.js, not browser print dialog */
+    .btn-pdf {
+      padding: 9px 18px;
+      background: linear-gradient(135deg, var(--gold), #a8722a);
+      border: none; border-radius: 8px;
+      color: #0a0a0a; cursor: pointer;
+      font-family: var(--font); font-size: 12.5px; font-weight: 800;
+      transition: all 0.2s;
+      display: flex; align-items: center; gap: 7px;
+      box-shadow: 0 4px 14px rgba(201,168,76,0.25);
+    }
+    .btn-pdf:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 22px rgba(201,168,76,0.4);
+    }
+    .btn-pdf:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+    .pdf-spin {
+      width: 13px; height: 13px;
+      border: 2px solid rgba(0,0,0,0.2);
+      border-top-color: #0a0a0a;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      display: none;
+    }
+ 
     /* Resume paper */
     .resume-paper {
       background: #ffffff;
@@ -375,51 +397,51 @@
       box-shadow: 0 30px 80px rgba(0,0,0,0.55), 0 0 0 1px rgba(255,255,255,0.04);
       min-height: 500px;
     }
-
+ 
     /* States */
     .state-empty {
       display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
+      flex-direction: column; align-items: center; justify-content: center;
       min-height: 460px;
-      color: var(--muted);
-      text-align: center;
-      padding: 40px;
+      color: var(--muted); text-align: center; padding: 40px;
     }
     .state-empty .icon { font-size: 52px; margin-bottom: 16px; opacity: 0.35; }
     .state-empty p { font-size: 14px; line-height: 1.65; max-width: 230px; }
     .state-empty strong { color: var(--gold2); }
-
+ 
+    /* FIX 9: state-loading — define flex in class, toggle with display property only */
     .state-loading {
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 460px;
-      gap: 14px;
+      display: none; /* toggled via JS */
+      flex-direction: column; align-items: center; justify-content: center;
+      min-height: 460px; gap: 14px;
     }
+    .state-loading.show { display: flex; } /* use .show class, not inline style */
+ 
     .loader {
       width: 44px; height: 44px;
-      border: 3px solid var(--border2);
+      border: 3px solid var(--bor2);
       border-top-color: var(--gold);
       border-radius: 50%;
       animation: spin 0.85s linear infinite;
     }
     .loader-text { color: var(--muted); font-size: 14px; }
     .loader-sub  { color: var(--muted2); font-size: 12px; margin-top: -6px; }
-
     @keyframes spin { to { transform: rotate(360deg); } }
-
+ 
     /* ── RESUME OUTPUT STYLES ── */
     .resume-inner {
       padding: 42px 44px 52px;
       color: #1a1a2a;
-      font-family: 'Outfit', Georgia, sans-serif;
-      font-size: 13.5px;
-      line-height: 1.65;
+      font-family: var(--font);
+      font-size: 13.5px; line-height: 1.65;
     }
-
+    /* Top colour accent bar */
+    .r-top-bar {
+      height: 5px;
+      background: linear-gradient(90deg, #1a1a2a 55%, #c9a84c 100%);
+      margin: -42px -44px 32px;
+    }
+ 
     .r-header {
       margin-bottom: 26px;
       padding-bottom: 18px;
@@ -433,147 +455,136 @@
       width: 56px; height: 3px;
       background: #c9a84c;
     }
-
     .r-name {
-      font-family: 'Playfair Display', Georgia, serif;
-      font-size: 28px;
-      font-weight: 900;
+      font-family: var(--serif);
+      font-size: 28px; font-weight: 900;
       color: #0a0a14;
-      letter-spacing: -0.02em;
-      line-height: 1.1;
+      letter-spacing: -0.02em; line-height: 1.1;
       margin-bottom: 6px;
     }
-    .r-headline {
-      font-size: 14px;
-      font-weight: 600;
-      color: #666;
-      margin-bottom: 10px;
-    }
-    .r-contact {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 14px;
-      font-size: 12px;
-      color: #555;
-    }
+    .r-headline { font-size: 13.5px; font-weight: 600; color: #b5892a; margin-bottom: 10px; }
+    .r-contact { display: flex; flex-wrap: wrap; gap: 14px; font-size: 12px; color: #555; }
     .r-contact span { display: flex; align-items: center; gap: 4px; }
-
+ 
     .r-section { margin-bottom: 20px; }
-
     .r-sec-title {
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: #888;
-      margin-bottom: 12px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
+      font-size: 10px; font-weight: 700;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      color: #888; margin-bottom: 12px;
+      display: flex; align-items: center; gap: 10px;
     }
     .r-sec-title::after { content: ''; flex: 1; height: 1px; background: #e8e8e8; }
-
+ 
     .r-summary { color: #333; font-size: 13.5px; line-height: 1.7; }
-
+ 
     .r-exp { margin-bottom: 15px; }
-    .r-exp-hdr {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      margin-bottom: 1px;
-    }
-    .r-role  { font-weight: 700; color: #111; font-size: 14px; }
-    .r-dur   { font-size: 11px; color: #888; font-weight: 500; white-space: nowrap; margin-left: 10px; }
-    .r-co    { color: #b5892a; font-weight: 600; font-size: 12px; margin-bottom: 5px; }
-    .r-desc  { color: #444; font-size: 13px; }
-
+    .r-exp-hdr { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 1px; }
+    .r-role { font-weight: 700; color: #111; font-size: 14px; }
+    .r-dur  { font-size: 11px; color: #888; font-weight: 500; white-space: nowrap; margin-left: 10px; }
+    .r-co   { color: #b5892a; font-weight: 600; font-size: 12px; margin-bottom: 5px; }
+    .r-desc { color: #444; font-size: 13px; }
+ 
+    /* FIX 4: clear float after r-year-right to prevent bleed into next section */
     .r-edu { margin-bottom: 12px; overflow: hidden; }
+    .r-edu::after { content: ''; display: table; clear: both; } /* FIX 4 */
     .r-degree { font-weight: 700; color: #111; }
     .r-school { color: #666; font-size: 13px; }
     .r-year-right { font-size: 11px; color: #999; float: right; }
-
+ 
     .r-skills { display: flex; flex-wrap: wrap; gap: 6px; }
     .r-skill {
-      background: #f5f3ff;
-      color: #4a3fa0;
-      border-radius: 5px;
-      padding: 3px 10px;
-      font-size: 11.5px;
-      font-weight: 600;
+      background: #f5f3ff; color: #4a3fa0;
+      border-radius: 5px; padding: 3px 10px;
+      font-size: 11.5px; font-weight: 600;
       border: 1px solid #e4e0ff;
     }
-
+ 
+    .r-footer {
+      margin-top: 26px; padding-top: 10px;
+      border-top: 1px solid #eee;
+      font-size: 10px; color: #ccc;
+      text-align: right; letter-spacing: 0.05em;
+    }
+ 
+    /* ── TOAST ── */
+    #toast {
+      position: fixed; bottom: 22px; left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: #0a0a14; color: #fff;
+      padding: 11px 22px; border-radius: 100px;
+      font-size: 13px; font-weight: 600;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+      z-index: 999;
+      transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+      pointer-events: none; white-space: nowrap;
+    }
+    #toast.show { transform: translateX(-50%) translateY(0); }
+ 
     /* ── FOOTER ── */
     footer {
-      position: relative;
-      z-index: 5;
+      position: relative; z-index: 5;
       text-align: center;
       padding: 0 20px 36px;
-      color: var(--muted2);
-      font-size: 12px;
+      color: var(--muted2); font-size: 12px;
     }
-    footer a { color: var(--gold); text-decoration: none; }
-    footer a:hover { text-decoration: underline; }
-
+    /* FIX 10: footer text without wrapping <p> */
+ 
     /* ── Animations ── */
-    @keyframes fadeDown { from { opacity: 0; transform: translateY(-18px); } to { opacity: 1; transform: translateY(0); } }
-    @keyframes fadeUp   { from { opacity: 0; transform: translateY(18px);  } to { opacity: 1; transform: translateY(0); } }
-    @keyframes fadeIn   { from { opacity: 0; } to { opacity: 1; } }
-
-    /* ── Print ── */
-    @media print {
-      body { background: #fff; }
-      header, .form-panel, .preview-hdr, footer { display: none !important; }
-      .app { display: block; padding: 0; max-width: 100%; }
-      .preview-panel { animation: none; }
-      .resume-paper { box-shadow: none; border-radius: 0; }
-      .state-empty, .state-loading { display: none !important; }
-    }
-
+    @keyframes fadeDown { from { opacity:0; transform:translateY(-18px); } to { opacity:1; transform:translateY(0); } }
+    @keyframes fadeUp   { from { opacity:0; transform:translateY(18px);  } to { opacity:1; transform:translateY(0); } }
+    @keyframes fadeIn   { from { opacity:0; } to { opacity:1; } }
+ 
+    /* ── PDF-friendly colours ── */
+    .resume-inner * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+ 
     /* ── Scrollbar ── */
     ::-webkit-scrollbar { width: 5px; }
     ::-webkit-scrollbar-track { background: var(--bg); }
-    ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 10px; }
+    ::-webkit-scrollbar-thumb { background: var(--bor2); border-radius: 10px; }
   </style>
 </head>
 <body>
-
+ 
   <!-- ══ HEADER ══ -->
   <header>
     <div class="brand-logo">
-      <div class="brand-icon">⚓</div>
+      <div class="brand-icon">&#9875;</div>
       <span class="brand-name">Frigates</span>
     </div>
-    <div class="badge">✦ Resume / CV Creator</div>
+    <div class="badge">&#10022; Resume / CV Creator</div>
     <h1>Build Your Professional Story</h1>
-    <p>Fill in your details across 4 simple steps and generate a polished, print-ready resume instantly.</p>
+    <p>Fill in your details across 4 simple steps and download a polished, A4 PDF resume instantly.</p>
   </header>
-
+ 
   <!-- ══ MAIN APP ══ -->
   <div class="app">
-
+ 
     <!-- ── FORM PANEL ── -->
     <div class="form-panel">
-
-      <!-- Step tabs -->
+ 
+      <!-- FIX 11: Progress bar -->
+      <div class="prog-wrap"><div class="prog-fill" id="prog-fill"></div></div>
+ 
+      <!-- Step tabs — FIX 1: type="button" on every button -->
       <div class="steps-nav" role="tablist">
-        <button class="step-btn active" role="tab" aria-selected="true"  onclick="goStep(0)"><span class="num">01</span>Personal</button>
-        <button class="step-btn"        role="tab" aria-selected="false" onclick="goStep(1)"><span class="num">02</span>Work</button>
-        <button class="step-btn"        role="tab" aria-selected="false" onclick="goStep(2)"><span class="num">03</span>Education</button>
-        <button class="step-btn"        role="tab" aria-selected="false" onclick="goStep(3)"><span class="num">04</span>Skills</button>
+        <button class="step-btn active" type="button" role="tab" aria-selected="true"  onclick="goStep(0)"><span class="num">01</span>Personal</button>
+        <button class="step-btn"        type="button" role="tab" aria-selected="false" onclick="goStep(1)"><span class="num">02</span>Work</button>
+        <button class="step-btn"        type="button" role="tab" aria-selected="false" onclick="goStep(2)"><span class="num">03</span>Education</button>
+        <button class="step-btn"        type="button" role="tab" aria-selected="false" onclick="goStep(3)"><span class="num">04</span>Skills</button>
       </div>
-
+ 
       <div class="form-body">
-
+ 
         <!-- Step 0 · Personal -->
         <div class="step-panel active" id="step-0" role="tabpanel">
           <div class="sec-title">Personal Details</div>
-
+ 
           <div class="field">
-            <label for="f-name">Full Name</label>
+            <!-- FIX 5: required field marked -->
+            <label for="f-name">Full Name <span style="color:var(--danger)">*</span></label>
             <input type="text" id="f-name" placeholder="Jane Doe" autocomplete="name" />
           </div>
-
+ 
           <div class="row2">
             <div class="field">
               <label for="f-email">Email</label>
@@ -584,7 +595,7 @@
               <input type="tel" id="f-phone" placeholder="+1 555 000 0000" autocomplete="tel" />
             </div>
           </div>
-
+ 
           <div class="row2">
             <div class="field">
               <label for="f-location">Location</label>
@@ -595,144 +606,200 @@
               <input type="text" id="f-linkedin" placeholder="linkedin.com/in/jane" />
             </div>
           </div>
-
+ 
           <div class="field">
             <label for="f-website">Website / Portfolio</label>
             <input type="text" id="f-website" placeholder="janedoe.dev" />
           </div>
-
+ 
           <div class="field">
             <label for="f-title">Job Title / Headline</label>
             <input type="text" id="f-title" placeholder="Senior Software Engineer" />
           </div>
-
+ 
           <div class="field">
             <label for="f-summary">Professional Summary</label>
-            <textarea id="f-summary" rows="4" placeholder="Brief intro — your expertise, background, and career goals..."></textarea>
+            <textarea id="f-summary" rows="4" placeholder="Brief intro — your expertise, background and career goals..."></textarea>
           </div>
         </div>
-
+ 
         <!-- Step 1 · Work Experience -->
         <div class="step-panel" id="step-1" role="tabpanel">
           <div class="sec-title">Work Experience</div>
           <div id="exp-list"></div>
-          <button class="btn-add" onclick="addExp()">+ Add Experience</button>
+          <!-- FIX 1: type="button" -->
+          <button class="btn-add" type="button" onclick="addExp()">+ Add Experience</button>
         </div>
-
+ 
         <!-- Step 2 · Education -->
         <div class="step-panel" id="step-2" role="tabpanel">
           <div class="sec-title">Education</div>
           <div id="edu-list"></div>
-          <button class="btn-add" onclick="addEdu()">+ Add Education</button>
+          <!-- FIX 1: type="button" -->
+          <button class="btn-add" type="button" onclick="addEdu()">+ Add Education</button>
         </div>
-
+ 
         <!-- Step 3 · Skills & More -->
         <div class="step-panel" id="step-3" role="tabpanel">
           <div class="sec-title">Skills &amp; More</div>
-
+ 
           <div class="field">
-            <label for="f-skills">Skills <span style="text-transform:none;font-size:10px;">(comma separated)</span></label>
-            <textarea id="f-skills" rows="4" placeholder="JavaScript, React, Python, Leadership, Problem Solving..."></textarea>
+            <label for="f-skills">Skills <span style="text-transform:none;font-size:10px;font-weight:400;">(comma separated)</span></label>
+            <textarea id="f-skills" rows="4" placeholder="JavaScript, React, Python, Leadership..."></textarea>
           </div>
-
           <div class="field">
             <label for="f-languages">Languages</label>
             <input type="text" id="f-languages" placeholder="English (Native), Spanish (Conversational)" />
           </div>
-
           <div class="field">
             <label for="f-certs">Certifications</label>
             <input type="text" id="f-certs" placeholder="AWS Certified, PMP, Google Analytics..." />
           </div>
-
           <div class="field">
             <label for="f-interests">Interests / Hobbies</label>
             <input type="text" id="f-interests" placeholder="Open Source, Photography, Chess..." />
           </div>
         </div>
-
+ 
       </div><!-- /form-body -->
-
-      <!-- Nav buttons -->
+ 
+      <!-- FIX 5: Validation error message area -->
+      <div class="val-err" id="val-err"></div>
+ 
+      <!-- Nav buttons — FIX 1: type="button" on all -->
       <div class="form-nav">
-        <button class="btn btn-ghost"   id="btn-back" onclick="prevStep()" disabled>&#8592; Back</button>
-        <button class="btn btn-primary" id="btn-next" onclick="nextStep()">Next &#8594;</button>
-        <button class="btn btn-gen"     id="btn-gen"  onclick="buildResume()" style="display:none;">&#10022; Create CV</button>
+        <button class="btn btn-ghost"   type="button" id="btn-back" onclick="prevStep()" disabled>&#8592; Back</button>
+        <button class="btn btn-primary" type="button" id="btn-next" onclick="nextStep()">Next &#8594;</button>
+        <button class="btn btn-gen"     type="button" id="btn-gen"  onclick="buildResume()" style="display:none;">&#10022; Create CV</button>
       </div>
-
+ 
     </div><!-- /form-panel -->
-
+ 
     <!-- ── PREVIEW PANEL ── -->
     <div class="preview-panel">
       <div class="preview-hdr">
         <div class="preview-title">CV <span>Preview</span></div>
-        <button class="btn-print" onclick="window.print()">&#128424; Print / Save PDF</button>
+        <div class="preview-btns">
+          <!-- FIX 8: Rebuild button -->
+          <button class="btn-rebuild" type="button" id="btn-rebuild" onclick="buildResume()">&#8635; Rebuild</button>
+          <!-- FIX 2: Real PDF save button — uses html2pdf.js for direct download -->
+          <button class="btn-pdf" type="button" id="btn-pdf" onclick="savePDF()">
+            <span class="pdf-spin" id="pdf-spin"></span>
+            <span id="pdf-label">&#128196; Save as PDF</span>
+          </button>
+        </div>
       </div>
-
+ 
       <div class="resume-paper" id="resume-paper">
-
+ 
         <div class="state-empty" id="state-empty">
           <div class="icon">&#128196;</div>
           <p>Complete all 4 steps then click <strong>Create CV</strong> to generate your resume here.</p>
         </div>
-
+ 
+        <!-- FIX 9: use .show class instead of inline style -->
         <div class="state-loading" id="state-loading">
           <div class="loader"></div>
           <div class="loader-text">Building your CV&hellip;</div>
           <div class="loader-sub">Formatting &amp; polishing</div>
         </div>
-
+ 
         <div id="resume-out" style="display:none;"></div>
-
+ 
       </div><!-- /resume-paper -->
     </div><!-- /preview-panel -->
-
+ 
   </div><!-- /app -->
-
-  <!-- ══ FOOTER ══ -->
+ 
+  <!-- FIX 10: footer without wrapping <p> causing double margin -->
   <footer>
-    <p>&#9875; <strong style="color:var(--gold2);">Frigates Resume/CV Creator</strong> &mdash; Built with care. Free to use. &nbsp;|&nbsp;</p>
+    &#9875; <strong style="color:var(--gold2);">Frigates Resume/CV Creator</strong> &mdash; Free to use. Download as PDF instantly.
   </footer>
-
+ 
+  <!-- Toast notification -->
+  <div id="toast"></div>
+ 
   <script>
     'use strict';
-
+ 
     /* ── State ── */
     var currentStep = 0;
     var expCounter  = 0;
     var eduCounter  = 0;
-
+    var toastTimer  = null;
+ 
     /* ── Init ── */
     document.addEventListener('DOMContentLoaded', function () {
       addExp();
       addEdu();
+      // Enter key advances to next step (except in textarea)
+      document.addEventListener('keydown', function (e) {
+        if (e.key !== 'Enter') return;
+        if (document.activeElement && document.activeElement.tagName === 'TEXTAREA') return;
+        if (currentStep < 3) nextStep();
+        else buildResume();
+      });
     });
-
+ 
+    /* ── Toast helper ── */
+    function showToast(msg) {
+      var t = document.getElementById('toast');
+      t.innerHTML = msg;
+      t.classList.add('show');
+      if (toastTimer) clearTimeout(toastTimer);
+      toastTimer = setTimeout(function () { t.classList.remove('show'); }, 3000);
+    }
+ 
+    /* ── Validation helper ── */
+    function showValErr(msg) {
+      var el = document.getElementById('val-err');
+      el.innerHTML = '&#9888; ' + msg;
+      el.style.display = 'block';
+      setTimeout(function () { el.style.display = 'none'; }, 3500);
+    }
+ 
     /* ── Navigation ── */
     function goStep(n) {
       var panels  = document.querySelectorAll('.step-panel');
       var buttons = document.querySelectorAll('.step-btn');
-
-      panels.forEach(function (p, i) {
-        p.classList.toggle('active', i === n);
-      });
-      buttons.forEach(function (b, i) {
-        b.classList.toggle('active', i === n);
-        b.setAttribute('aria-selected', i === n ? 'true' : 'false');
-      });
-
+ 
+      for (var i = 0; i < panels.length; i++) {
+        panels[i].classList.toggle('active', i === n);
+      }
+      for (var j = 0; j < buttons.length; j++) {
+        buttons[j].classList.toggle('active', j === n);
+        buttons[j].setAttribute('aria-selected', j === n ? 'true' : 'false');
+      }
+ 
       currentStep = n;
       var isLast = (n === 3);
-
-      document.getElementById('btn-back').disabled = (n === 0);
-      document.getElementById('btn-next').style.display = isLast ? 'none' : '';
-      document.getElementById('btn-gen').style.display  = isLast ? ''     : 'none';
+ 
+      /* FIX 11: update progress bar */
+      document.getElementById('prog-fill').style.width = ((n + 1) * 25) + '%';
+ 
+      document.getElementById('btn-back').disabled           = (n === 0);
+      document.getElementById('btn-next').style.display      = isLast ? 'none' : '';
+      document.getElementById('btn-gen').style.display       = isLast ? ''     : 'none';
     }
-
-    function nextStep() { if (currentStep < 3) goStep(currentStep + 1); }
+ 
+    function nextStep() {
+      /* FIX 5: validate required name field before advancing from step 0 */
+      if (currentStep === 0) {
+        var nameEl = document.getElementById('f-name');
+        if (!nameEl || !nameEl.value.trim()) {
+          nameEl.classList.add('invalid');
+          showValErr('Please enter your full name to continue.');
+          nameEl.focus();
+          setTimeout(function () { nameEl.classList.remove('invalid'); }, 2000);
+          return;
+        }
+      }
+      if (currentStep < 3) goStep(currentStep + 1);
+    }
+ 
     function prevStep() { if (currentStep > 0) goStep(currentStep - 1); }
-
-    /* ── Add experience ── */
+ 
+    /* ── Add experience — FIX 1: type="button" inside innerHTML ── */
     function addExp() {
       expCounter++;
       var id  = expCounter;
@@ -742,16 +809,20 @@
       div.innerHTML =
         '<div class="entry-hdr">' +
           '<span class="entry-lbl">Experience #' + id + '</span>' +
-          '<button class="btn-rm" onclick="removeEl(\'exp-' + id + '\')">&#10005; Remove</button>' +
+          '<button class="btn-rm" type="button" onclick="removeEl(\'exp-' + id + '\')">&#10005; Remove</button>' +
         '</div>' +
-        '<div class="field"><label>Job Title</label><input type="text" id="er-' + id + '" placeholder="Software Engineer" /></div>' +
-        '<div class="field"><label>Company</label><input type="text" id="ec-' + id + '" placeholder="Acme Corporation" /></div>' +
-        '<div class="field"><label>Duration</label><input type="text" id="ed-' + id + '" placeholder="Jan 2021 \u2013 Present" /></div>' +
-        '<div class="field"><label>Description</label><textarea id="edesc-' + id + '" rows="3" placeholder="Key responsibilities, achievements, tools used..."></textarea></div>';
+        '<div class="field"><label>Job Title</label>' +
+          '<input type="text" id="er-' + id + '" placeholder="Software Engineer" /></div>' +
+        '<div class="field"><label>Company</label>' +
+          '<input type="text" id="ec-' + id + '" placeholder="Acme Corporation" /></div>' +
+        '<div class="field"><label>Duration</label>' +
+          '<input type="text" id="ed-' + id + '" placeholder="Jan 2021 \u2013 Present" /></div>' +
+        '<div class="field"><label>Description</label>' +
+          '<textarea id="edesc-' + id + '" rows="3" placeholder="Key responsibilities, achievements, tools used..."></textarea></div>';
       document.getElementById('exp-list').appendChild(div);
     }
-
-    /* ── Add education ── */
+ 
+    /* ── Add education — FIX 1: type="button" ── */
     function addEdu() {
       eduCounter++;
       var id  = eduCounter;
@@ -761,64 +832,65 @@
       div.innerHTML =
         '<div class="entry-hdr">' +
           '<span class="entry-lbl">Education #' + id + '</span>' +
-          '<button class="btn-rm" onclick="removeEl(\'edu-' + id + '\')">&#10005; Remove</button>' +
+          '<button class="btn-rm" type="button" onclick="removeEl(\'edu-' + id + '\')">&#10005; Remove</button>' +
         '</div>' +
-        '<div class="field"><label>School / University</label><input type="text" id="es-' + id + '" placeholder="Massachusetts Institute of Technology" /></div>' +
-        '<div class="field"><label>Degree</label><input type="text" id="edg-' + id + '" placeholder="B.Sc. Computer Science" /></div>' +
-        '<div class="field"><label>Graduation Year</label><input type="text" id="ey-' + id + '" placeholder="2020" /></div>';
+        '<div class="field"><label>School / University</label>' +
+          '<input type="text" id="es-' + id + '" placeholder="Massachusetts Institute of Technology" /></div>' +
+        '<div class="field"><label>Degree</label>' +
+          '<input type="text" id="edg-' + id + '" placeholder="B.Sc. Computer Science" /></div>' +
+        '<div class="field"><label>Graduation Year</label>' +
+          '<input type="text" id="ey-' + id + '" placeholder="2020" /></div>';
       document.getElementById('edu-list').appendChild(div);
     }
-
-    /* ── Remove an entry card ── */
+ 
+    /* ── Remove entry ── */
     function removeEl(id) {
       var el = document.getElementById(id);
-      if (el) { el.parentNode.removeChild(el); }
+      if (el && el.parentNode) { el.parentNode.removeChild(el); }
     }
-
+ 
     /* ── Safe value getter ── */
     function val(id) {
       var el = document.getElementById(id);
       return el ? el.value.trim() : '';
     }
-
+ 
     /* ── Collect all form data ── */
     function collectData() {
       var experience = [];
-      document.querySelectorAll('#exp-list .entry-card').forEach(function (card) {
-        var id   = card.id.replace('exp-', '');
-        var role = val('er-' + id);
-        var co   = val('ec-' + id);
+      var expCards = document.querySelectorAll('#exp-list .entry-card');
+      for (var i = 0; i < expCards.length; i++) {
+        var eid  = expCards[i].id.replace('exp-', '');
+        var role = val('er-' + eid);
+        var co   = val('ec-' + eid);
         if (role || co) {
           experience.push({
             role:        role,
             company:     co,
-            duration:    val('ed-' + id),
-            description: val('edesc-' + id)
+            duration:    val('ed-'    + eid),
+            description: val('edesc-' + eid)
           });
         }
-      });
-
+      }
+ 
       var education = [];
-      document.querySelectorAll('#edu-list .entry-card').forEach(function (card) {
-        var id     = card.id.replace('edu-', '');
-        var school = val('es-' + id);
-        var degree = val('edg-' + id);
+      var eduCards = document.querySelectorAll('#edu-list .entry-card');
+      for (var j = 0; j < eduCards.length; j++) {
+        var kid    = eduCards[j].id.replace('edu-', '');
+        var school = val('es-'  + kid);
+        var degree = val('edg-' + kid);
         if (school || degree) {
-          education.push({
-            school: school,
-            degree: degree,
-            year:   val('ey-' + id)
-          });
+          education.push({ school: school, degree: degree, year: val('ey-' + kid) });
         }
-      });
-
+      }
+ 
       return {
         name:           val('f-name'),
         email:          val('f-email'),
         phone:          val('f-phone'),
         location:       val('f-location'),
         linkedin:       val('f-linkedin'),
-        website:        val('f-website'),
+        website:        val('f-website'),   /* FIX 6: collected and now rendered */
         title:          val('f-title'),
         summary:        val('f-summary'),
         experience:     experience,
@@ -829,17 +901,17 @@
         interests:      val('f-interests')
       };
     }
-
-    /* ── Auto-fill helpers (no API needed) ── */
+ 
+    /* ── Auto-fill helpers ── */
     function autoSummary(text, name, title) {
       if (text) return text;
       if (!title && !name) return '';
-      var who = name || 'A motivated professional';
+      var who  = name  || 'A motivated professional';
       var role = title || 'professional';
       return who + ' is a dedicated ' + role + ' with a strong track record of delivering results. ' +
              'Passionate about creating meaningful impact and continually developing skills to drive success.';
     }
-
+ 
     function autoDesc(text, role, company) {
       if (text) return text;
       if (!role) return '';
@@ -847,16 +919,25 @@
              (company ? ' at ' + company : '') +
              '. Collaborated cross-functionally to achieve team objectives and drive continuous improvement.';
     }
-
+ 
     /* ── Build & render CV ── */
     function buildResume() {
       var data = collectData();
-
-      document.getElementById('state-empty').style.display   = 'none';
-      document.getElementById('state-loading').style.display = 'flex';
-      document.getElementById('resume-out').style.display    = 'none';
-
-      /* Simulate a brief generation delay for UX */
+ 
+      /* FIX 5: Validate name is not empty */
+      if (!data.name) {
+        goStep(0);
+        var nameEl = document.getElementById('f-name');
+        if (nameEl) { nameEl.classList.add('invalid'); nameEl.focus(); setTimeout(function(){nameEl.classList.remove('invalid');},2000); }
+        showValErr('Please enter your full name before building the CV.');
+        return;
+      }
+ 
+      document.getElementById('state-empty').style.display = 'none';
+      /* FIX 9: use .show class */
+      document.getElementById('state-loading').classList.add('show');
+      document.getElementById('resume-out').style.display  = 'none';
+ 
       setTimeout(function () {
         var resume = {
           name:           data.name,
@@ -882,119 +963,166 @@
           interests:      data.interests
         };
         renderResume(resume);
+        /* FIX 8: show rebuild button */
+        document.getElementById('btn-rebuild').style.display = '';
+        /* FIX 7: toast confirmation */
+        showToast('&#9989; CV built! Click Save as PDF to download.');
       }, 850);
     }
-
-    /* ── Sanitise text to prevent XSS ── */
+ 
+    /* ── XSS escaping ── */
     function esc(str) {
       if (!str) return '';
-      return str
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#039;');
+      return String(str)
+        .replace(/&/g,  '&amp;')
+        .replace(/</g,  '&lt;')
+        .replace(/>/g,  '&gt;')
+        .replace(/"/g,  '&quot;')
+        .replace(/'/g,  '&#039;');
     }
-
+ 
     /* ── Render the resume HTML ── */
     function renderResume(r) {
-      document.getElementById('state-loading').style.display = 'none';
-
+      /* FIX 9: remove .show class */
+      document.getElementById('state-loading').classList.remove('show');
+ 
       /* Contact line */
-      var contactParts = [];
-      if (r.email)    contactParts.push('<span>&#9993; ' + esc(r.email)    + '</span>');
-      if (r.phone)    contactParts.push('<span>&#128222; ' + esc(r.phone)   + '</span>');
-      if (r.location) contactParts.push('<span>&#128205; ' + esc(r.location) + '</span>');
-      if (r.linkedin) contactParts.push('<span>&#128279; ' + esc(r.linkedin) + '</span>');
-      if (r.website)  contactParts.push('<span>&#127760; ' + esc(r.website)  + '</span>');
-
+      var cp = [];
+      if (r.email)    cp.push('<span>&#9993; '    + esc(r.email)    + '</span>');
+      if (r.phone)    cp.push('<span>&#128222; '  + esc(r.phone)    + '</span>');
+      if (r.location) cp.push('<span>&#128205; '  + esc(r.location) + '</span>');
+      if (r.linkedin) cp.push('<span>&#128279; '  + esc(r.linkedin) + '</span>');
+      /* FIX 6: website now rendered in output */
+      if (r.website)  cp.push('<span>&#127760; '  + esc(r.website)  + '</span>');
+ 
       /* Experience */
-      var expHTML = r.experience.map(function (e) {
-        return '<div class="r-exp">' +
-          '<div class="r-exp-hdr">' +
-            '<span class="r-role">' + esc(e.role) + '</span>' +
-            '<span class="r-dur">'  + esc(e.duration) + '</span>' +
-          '</div>' +
-          '<div class="r-co">'   + esc(e.company)     + '</div>' +
-          '<div class="r-desc">' + esc(e.description) + '</div>' +
-        '</div>';
-      }).join('');
-
+      var expHTML = '';
+      for (var i = 0; i < r.experience.length; i++) {
+        var e = r.experience[i];
+        expHTML +=
+          '<div class="r-exp">' +
+            '<div class="r-exp-hdr">' +
+              '<span class="r-role">' + esc(e.role)     + '</span>' +
+              '<span class="r-dur">'  + esc(e.duration) + '</span>' +
+            '</div>' +
+            '<div class="r-co">'   + esc(e.company)     + '</div>' +
+            '<div class="r-desc">' + esc(e.description) + '</div>' +
+          '</div>';
+      }
+ 
       /* Education */
-      var eduHTML = r.education.map(function (e) {
-        return '<div class="r-edu">' +
-          '<span class="r-year-right">' + esc(e.year)   + '</span>' +
-          '<div class="r-degree">'      + esc(e.degree) + '</div>' +
-          '<div class="r-school">'      + esc(e.school) + '</div>' +
-        '</div>';
-      }).join('');
-
+      var eduHTML = '';
+      for (var j = 0; j < r.education.length; j++) {
+        var ed = r.education[j];
+        eduHTML +=
+          '<div class="r-edu">' +
+            '<span class="r-year-right">' + esc(ed.year)   + '</span>' +
+            '<div class="r-degree">'      + esc(ed.degree) + '</div>' +
+            '<div class="r-school">'      + esc(ed.school) + '</div>' +
+          '</div>';
+      }
+ 
       /* Skills */
       var skillsHTML = '';
       if (r.skills) {
-        skillsHTML = r.skills.split(',').filter(function (s) { return s.trim(); }).map(function (s) {
-          return '<span class="r-skill">' + esc(s.trim()) + '</span>';
-        }).join('');
+        var arr = r.skills.split(',');
+        for (var k = 0; k < arr.length; k++) {
+          var s = arr[k].trim();
+          if (s) skillsHTML += '<span class="r-skill">' + esc(s) + '</span>';
+        }
       }
-
+ 
+      /* Section helper */
+      function sec(title, content) {
+        if (!content) return '';
+        return '<div class="r-section">' +
+                 '<div class="r-sec-title">' + title + '</div>' +
+                 content +
+               '</div>';
+      }
+ 
       /* Assemble */
       var html =
         '<div class="resume-inner">' +
-
+          '<div class="r-top-bar"></div>' +
           '<div class="r-header">' +
             '<div class="r-name">' + esc(r.name || 'Your Name') + '</div>' +
             (r.title ? '<div class="r-headline">' + esc(r.title) + '</div>' : '') +
-            '<div class="r-contact">' + contactParts.join('') + '</div>' +
+            '<div class="r-contact">' + cp.join('') + '</div>' +
           '</div>' +
-
-          (r.summary ?
-            '<div class="r-section">' +
-              '<div class="r-sec-title">Professional Summary</div>' +
-              '<div class="r-summary">' + esc(r.summary) + '</div>' +
-            '</div>' : '') +
-
-          (expHTML ?
-            '<div class="r-section">' +
-              '<div class="r-sec-title">Experience</div>' +
-              expHTML +
-            '</div>' : '') +
-
-          (eduHTML ?
-            '<div class="r-section">' +
-              '<div class="r-sec-title">Education</div>' +
-              eduHTML +
-            '</div>' : '') +
-
-          (skillsHTML ?
-            '<div class="r-section">' +
-              '<div class="r-sec-title">Skills</div>' +
-              '<div class="r-skills">' + skillsHTML + '</div>' +
-            '</div>' : '') +
-
-          (r.languages ?
-            '<div class="r-section">' +
-              '<div class="r-sec-title">Languages</div>' +
-              '<div class="r-summary">' + esc(r.languages) + '</div>' +
-            '</div>' : '') +
-
-          (r.certifications ?
-            '<div class="r-section">' +
-              '<div class="r-sec-title">Certifications</div>' +
-              '<div class="r-summary">' + esc(r.certifications) + '</div>' +
-            '</div>' : '') +
-
-          (r.interests ?
-            '<div class="r-section">' +
-              '<div class="r-sec-title">Interests</div>' +
-              '<div class="r-summary">' + esc(r.interests) + '</div>' +
-            '</div>' : '') +
-
-        '</div>'; /* /resume-inner */
-
+          sec('Professional Summary',
+              r.summary ? '<div class="r-summary">' + esc(r.summary) + '</div>' : '') +
+          sec('Experience', expHTML) +
+          sec('Education',  eduHTML) +
+          sec('Skills',
+              skillsHTML ? '<div class="r-skills">' + skillsHTML + '</div>' : '') +
+          sec('Languages',
+              r.languages ? '<div class="r-summary">' + esc(r.languages) + '</div>' : '') +
+          sec('Certifications',
+              r.certifications ? '<div class="r-summary">' + esc(r.certifications) + '</div>' : '') +
+          sec('Interests',
+              r.interests ? '<div class="r-summary">' + esc(r.interests) + '</div>' : '') +
+          '<div class="r-footer">Created with Frigates Resume/CV Creator</div>' +
+        '</div>';
+ 
       var out = document.getElementById('resume-out');
       out.innerHTML = html;
       out.style.display   = 'block';
       out.style.animation = 'fadeIn 0.5s ease';
+    }
+ 
+    /* ── FIX 2: Real PDF Save using html2pdf.js ── */
+    function savePDF() {
+      var out = document.getElementById('resume-out');
+      if (!out || out.style.display === 'none') {
+        showToast('&#9888; Please build your CV first.');
+        return;
+      }
+ 
+      var btn   = document.getElementById('btn-pdf');
+      var spin  = document.getElementById('pdf-spin');
+      var label = document.getElementById('pdf-label');
+ 
+      /* Show loading state on button */
+      btn.disabled      = true;
+      spin.style.display  = 'inline-block';
+      label.textContent   = 'Generating PDF...';
+ 
+      /* Filename from candidate name */
+      var name = val('f-name') || 'My-CV';
+      var filename = name.replace(/\s+/g, '-').replace(/[^a-zA-Z0-9\-]/g, '') + '-CV.pdf';
+ 
+      /* html2pdf options */
+      var opt = {
+        margin:      [10, 10, 10, 10],
+        filename:    filename,
+        image:       { type: 'jpeg', quality: 0.98 },
+        html2canvas: {
+          scale:           2,
+          useCORS:         true,
+          letterRendering: true,
+          backgroundColor: '#ffffff'
+        },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+        pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+      };
+ 
+      html2pdf()
+        .set(opt)
+        .from(out)
+        .save()
+        .then(function () {
+          btn.disabled      = false;
+          spin.style.display  = 'none';
+          label.innerHTML     = '&#128196; Save as PDF';
+          showToast('&#9989; PDF saved! Check your Downloads folder.');
+        })
+        .catch(function () {
+          btn.disabled      = false;
+          spin.style.display  = 'none';
+          label.innerHTML     = '&#128196; Save as PDF';
+          showToast('&#9888; PDF failed. Please try again.');
+        });
     }
   </script>
 </body>
