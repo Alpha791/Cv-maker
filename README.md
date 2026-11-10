@@ -1,38 +1,26 @@
-# 🧭 Homework Dashboard  
-A modern, multi-page class homework dashboard built with **HTML + CSS + JavaScript** and powered by **Firebase Firestore** for realtime homework syncing.
 
-This project is designed for students or schools that need a clean web interface to:
-- Add homework  
-- View homework  
-- Track due dates  
-- See all subjects  
-- Browse homework by calendar  
-- Store everything in Firebase  
+## Copyright & Intellectual Property
 
----
+Copyright (c) 2026 FRIGATES. All Rights Reserved.
 
-## 🚀 Features
+This project is an original development of FRIGATES
+unless otherwise stated.
 
-### ✔️ Modern Multi-Page Layout
-- Dashboard  
-- Add Homework  
-- Calendar View  
-- Subjects Filters  
-- Modal View for Homework Details  
+The repository is publicly accessible for technical
+inspection and evaluation.
 
-### ✔️ Firebase Integrated
-- Firestore realtime database  
-- Secure homework storage  
-- Updates sync instantly for all users  
-- Firebase v12 modular SDK  
+Public visibility does not constitute permission to
+reuse, reproduce, modify, redistribute or commercially
+exploit the original source code or project materials.
 
-### ✔️ UI & UX
-- Clean responsive design  
-- Smooth panel switching  
-- Dark theme  
-- Minimalistic, modern cards  
+For commercial licensing, collaboration, integration
+or permission to use this project, contact FRIGATES.
+
+See the [LICENSE](LICENSE) file for licensing terms.
 
 ---
 
-## 📁 Folder Structure
+**Developed by FRIGATES**
 
+Engineering solutions. Building technology.
+Solving complex problems.
